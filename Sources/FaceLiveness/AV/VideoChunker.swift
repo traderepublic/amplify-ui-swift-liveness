@@ -9,16 +9,16 @@ import AVFoundation
 import CoreImage
 import UIKit
 
-final class VideoChunker {
+public final class VideoChunker {
     var state = State.pending
     let assetWriter: AVAssetWriter
-    let assetWriterDelegate: AssetWriterDelegate
+    public let assetWriterDelegate: AssetWriterDelegate
     let assetWriterInput: AVAssetWriterInput
     let pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor
     var startTimeSeconds: Double?
     var provideSingleFrame: ((UIImage) -> Void)?
 
-    init(
+    public init(
         assetWriter: AVAssetWriter,
         assetWriterDelegate: AssetWriterDelegate,
         assetWriterInput: AVAssetWriterInput
@@ -32,14 +32,14 @@ final class VideoChunker {
         self.assetWriter.add(assetWriterInput)
     }
 
-    func start() {
+    public func start() {
         guard state == .pending else { return }
         assetWriter.startWriting()
         assetWriter.startSession(atSourceTime: .zero)
         state = .writing
     }
 
-    func finish(singleFrame: @escaping (UIImage) -> Void) {
+    public func finish(singleFrame: @escaping (UIImage) -> Void) {
         self.provideSingleFrame = singleFrame
         state = .awaitingSingleFrame
 
@@ -49,7 +49,7 @@ final class VideoChunker {
         }
     }
 
-    func consume(_ buffer: CMSampleBuffer) {
+    public func consume(_ buffer: CMSampleBuffer) {
         if state == .awaitingSingleFrame {
             guard let imageBuffer = buffer.imageBuffer else { return }
             let singleFrame = singleFrame(from: imageBuffer)

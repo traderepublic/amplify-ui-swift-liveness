@@ -7,20 +7,20 @@
 
 import UIKit
 
-final class FreshnessView: UIView {
+public final class FreshnessView: UIView {
     let oldRectangle = UIView()
     let fractionalRectangle = UIView()
 
     var fractionalRectangleBottom: NSLayoutConstraint?
     var oldRectangleTop: NSLayoutConstraint?
 
-    func clearColors() {
+    public func clearColors() {
         backgroundColor = .clear
         oldRectangle.backgroundColor = .clear
         fractionalRectangle.backgroundColor = .clear
     }
 
-    init() {
+    public init() {
         super.init(frame: .zero)
         oldRectangle.translatesAutoresizingMaskIntoConstraints = false
         fractionalRectangle.translatesAutoresizingMaskIntoConstraints = false

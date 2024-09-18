@@ -7,8 +7,12 @@
 
 import AVFoundation
 
-struct LivenessCaptureDevice {
+public struct LivenessCaptureDevice {
     let avCaptureDevice: AVCaptureDevice?
+    public init(avCaptureDevice: AVCaptureDevice?) {
+        self.avCaptureDevice = avCaptureDevice
+    }
+
     var preset: AVCaptureSession.Preset = .vga640x480
     var fps: Double = 30
     var exposure: AVCaptureDevice.ExposureMode = .continuousAutoExposure

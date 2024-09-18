@@ -7,8 +7,8 @@
 
 import AVFoundation
 
-final class LivenessAVAssetWriter: AVAssetWriter {
-    init() {
+public final class LivenessAVAssetWriter: AVAssetWriter {
+    public init() {
         super.init(contentType: .mpeg4Movie)
         outputFileTypeProfile = .mpeg4CMAFCompliant
         preferredOutputSegmentInterval = CMTime(

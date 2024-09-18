@@ -8,16 +8,16 @@
 import AVFoundation
 import CoreImage
 
-class OutputSampleBufferCapturer: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
-    let faceDetector: FaceDetector
-    let videoChunker: VideoChunker
+public class OutputSampleBufferCapturer: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+    public let faceDetector: FaceDetector
+    public let videoChunker: VideoChunker
 
-    init(faceDetector: FaceDetector, videoChunker: VideoChunker) {
+    public init(faceDetector: FaceDetector, videoChunker: VideoChunker) {
         self.faceDetector = faceDetector
         self.videoChunker = videoChunker
     }
 
-    func captureOutput(
+    public func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
         from connection: AVCaptureConnection

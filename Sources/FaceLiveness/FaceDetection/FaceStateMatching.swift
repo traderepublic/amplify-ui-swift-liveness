@@ -9,14 +9,24 @@ import UIKit
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 import Amplify
 
-struct FaceInOvalMatching {
+public struct FaceInOvalMatching {
     let instructor: Instructor
+
+    public init() {
+        self.init(instructor: Instructor())
+    }
+
+    init(instructor: Instructor) {
+        self.instructor = instructor
+    }
+
     private let storage = Storage()
     class Storage {
         var initialIOU: Double?
     }
-
-    func faceMatchState(
+    
+    @_spi(PredictionsFaceLiveness)
+    public func faceMatchState(
         for face: CGRect,
         in ovalRect: CGRect?,
         challengeConfig: FaceLivenessSession.OvalMatchChallenge

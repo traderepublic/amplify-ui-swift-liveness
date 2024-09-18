@@ -8,7 +8,7 @@
 import UIKit
 import InternalAmplifyCredentials
 
-struct UserAgentValues {
+public struct UserAgentValues {
     
     static let libVersion = "1.3.2"
     static let libName = "amplify-ui-swift-face-liveness"
@@ -22,7 +22,7 @@ struct UserAgentValues {
     let additionalMetadata: String
     let lib: String?
 
-    var userAgentString: String {
+    public var userAgentString: String {
         let string = "amplify-swift/\(amplifyVersion) api/rekognitionstreaming/\(amplifyVersion) os/\(os)/\(osVersion) lang/swift/\(swiftVersion) md/device/\(unameMachine) md/locale/\(locale)" + additionalMetadata
         if let lib = lib {
             return string + " \(lib)"
@@ -53,7 +53,7 @@ struct UserAgentValues {
         }.joined(separator: " ")
     }
 
-    static func standard(additionalMetadata: KeyValuePairs<String, String> = [:]) -> Self {
+    public static func standard(additionalMetadata: KeyValuePairs<String, String> = [:]) -> Self {
         return .init(
             amplifyVersion: AmplifyAWSServiceConfiguration.amplifyVersion,
             os: UIDevice.current.systemName.replacingOccurrences(of: " ", with: "-"),

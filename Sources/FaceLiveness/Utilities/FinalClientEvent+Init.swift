@@ -8,7 +8,7 @@
 import Foundation
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-extension FinalClientEvent {
+public extension FinalClientEvent {
     init(
         sessionConfiguration: FaceLivenessSession.SessionConfiguration,
         initialClientEvent: InitialClientEvent,

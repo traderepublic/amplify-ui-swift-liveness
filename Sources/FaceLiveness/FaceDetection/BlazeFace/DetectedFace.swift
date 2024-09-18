@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct DetectedFace {
-    var boundingBox: CGRect
+public struct DetectedFace {
+    public var boundingBox: CGRect
 
     let leftEye: CGPoint
     let rightEye: CGPoint
@@ -19,7 +19,7 @@ struct DetectedFace {
 
     let confidence: Float
 
-    func boundingBoxFromLandmarks(ovalRect: CGRect) -> CGRect {
+    public func boundingBoxFromLandmarks(ovalRect: CGRect) -> CGRect {
         let alpha = 2.0
         let gamma = 1.8
         let ow = (alpha * pupilDistance + gamma * faceHeight) / 2
@@ -45,11 +45,11 @@ struct DetectedFace {
         return rect
     }
 
-    var faceDistance: CGFloat {
+    public var faceDistance: CGFloat {
         sqrt(pow(rightEye.x - leftEye.x, 2) + pow(rightEye.y - leftEye.y, 2))
     }
     
-    var pupilDistance: CGFloat {
+    public var pupilDistance: CGFloat {
         sqrt(pow(leftEye.x - rightEye.x, 2) + pow(leftEye.y - rightEye.y, 2))
     }
     
@@ -65,7 +65,7 @@ struct DetectedFace {
         sqrt(pow(eyeCenterX - mouth.x, 2) + pow(eyeCenterY - mouth.y, 2))
     }
 
-    func normalize(width: CGFloat, height: CGFloat) -> DetectedFace {
+    public func normalize(width: CGFloat, height: CGFloat) -> DetectedFace {
         let boundingBox = CGRect(
             x: boundingBox.minX * width,
             y: boundingBox.minY * height,

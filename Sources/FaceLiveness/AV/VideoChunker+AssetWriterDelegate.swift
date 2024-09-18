@@ -7,16 +7,16 @@
 
 import AVFoundation
 
-extension VideoChunker {
-    class AssetWriterDelegate: NSObject, AVAssetWriterDelegate {
+public extension VideoChunker {
+    public class AssetWriterDelegate: NSObject, AVAssetWriterDelegate {
         private var initialSegmentData: Data?
         private weak var segmentProcessor: VideoSegmentProcessor?
 
-        func set(segmentProcessor: VideoSegmentProcessor) {
+        public func set(segmentProcessor: VideoSegmentProcessor) {
             self.segmentProcessor = segmentProcessor
         }
 
-        func assetWriter(
+        public func assetWriter(
             _ writer: AVAssetWriter,
             didOutputSegmentData segmentData: Data,
             segmentType: AVAssetSegmentType,

@@ -8,23 +8,23 @@
 import UIKit
 import AVFoundation
 
-class LivenessCaptureSession {
+public class LivenessCaptureSession {
     let captureDevice: LivenessCaptureDevice
     private let captureQueue = DispatchQueue(label: "com.amazonaws.faceliveness.cameracapturequeue")
     private let configurationQueue = DispatchQueue(label: "com.amazonaws.faceliveness.sessionconfiguration", qos: .userInteractive)
     let outputDelegate: AVCaptureVideoDataOutputSampleBufferDelegate
     var captureSession: AVCaptureSession?
     
-    var outputSampleBufferCapturer: OutputSampleBufferCapturer? {
+    public var outputSampleBufferCapturer: OutputSampleBufferCapturer? {
         return outputDelegate as? OutputSampleBufferCapturer
     }
 
-    init(captureDevice: LivenessCaptureDevice, outputDelegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
+    public init(captureDevice: LivenessCaptureDevice, outputDelegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
         self.captureDevice = captureDevice
         self.outputDelegate = outputDelegate
     }
 
-    func configureCamera(frame: CGRect) throws -> CALayer {
+    public func configureCamera(frame: CGRect) throws -> CALayer {
         try configureCamera()
 
         guard let captureSession = captureSession else {
@@ -64,14 +64,14 @@ class LivenessCaptureSession {
         )
     }
 
-    func startSession() {
+    public func startSession() {
         guard let session = captureSession else { return }
         configurationQueue.async {
             session.startRunning()
         }
     }
 
-    func stopRunning() {
+    public func stopRunning() {
         guard let session = captureSession else { return }
         defer {
             captureSession = nil

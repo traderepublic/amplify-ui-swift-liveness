@@ -8,7 +8,8 @@
 import UIKit
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-protocol FaceLivenessViewControllerPresenter: AnyObject {
+@_spi(PredictionsFaceLiveness)
+public protocol FaceLivenessViewControllerPresenter: AnyObject {
     func drawOvalInCanvas(_ ovalRect: CGRect)
     func displayFreshness(colorSequences: [FaceLivenessSession.DisplayColor])
     func displaySingleFrame(uiImage: UIImage)

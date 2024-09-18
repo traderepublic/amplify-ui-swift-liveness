@@ -13,10 +13,10 @@ import CoreGraphics
 import CoreImage
 import VideoToolbox
 
-enum FaceDetectorShortRange {}
+public enum FaceDetectorShortRange {}
 
-extension FaceDetectorShortRange {
-    final class Model: FaceDetector {
+public extension FaceDetectorShortRange {
+    public final class Model: FaceDetector {
         var model: MLModel
         let confidenceScoreThreshold: Float = 0.7
         let weightedNonMaxSuppressionThreshold: Float = 0.3
@@ -25,7 +25,7 @@ extension FaceDetectorShortRange {
             self.model = model
         }
 
-        convenience init() throws {
+        public convenience init() throws {
             try self.init(
                 face_detection_short_range(
                     configuration: .init()
@@ -35,11 +35,11 @@ extension FaceDetectorShortRange {
 
         weak var detectionResultHandler: FaceDetectionResultHandler?
 
-        func setResultHandler(detectionResultHandler: FaceDetectionResultHandler) {
+        public func setResultHandler(detectionResultHandler: FaceDetectionResultHandler) {
             self.detectionResultHandler = detectionResultHandler
         }
 
-        func detectFaces(from buffer: CVPixelBuffer) {
+        public func detectFaces(from buffer: CVPixelBuffer) {
             let faces = prediction(for: buffer)
             let observationResult: FaceDetectionResult
             switch faces.count {

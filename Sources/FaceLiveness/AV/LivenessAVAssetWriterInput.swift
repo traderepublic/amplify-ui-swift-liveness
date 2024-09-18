@@ -11,8 +11,8 @@ fileprivate let videoWidth = 480
 fileprivate let videoHeight = 640
 fileprivate let bitRate = 1_000_000
 
-class LivenessAVAssetWriterInput: AVAssetWriterInput {
-    init() {
+public class LivenessAVAssetWriterInput: AVAssetWriterInput {
+    public init() {
         super.init(
             mediaType: .video,
             outputSettings: [
