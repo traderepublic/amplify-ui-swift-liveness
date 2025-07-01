@@ -78,6 +78,10 @@ public struct LivenessStateMachine {
     public mutating func completedDisplayingFreshness() {
         state = .completedDisplayingFreshness
     }
+    
+    mutating func completedNoLightCheck() {
+        state = .completedNoLightCheck
+    }
 
     public mutating func displayingFreshness() {
         state = .displayingFreshness
@@ -97,6 +101,7 @@ public struct LivenessStateMachine {
 
     public enum State: Equatable {
         case initial
+        case awaitingChallengeType
         case pendingFacePreparedConfirmation(FaceNotPreparedReason)
         case recording(ovalDisplayed: Bool)
         case awaitingFaceInOvalMatch(FaceNotPreparedReason, Double)
@@ -104,6 +109,7 @@ public struct LivenessStateMachine {
         case initialClientInfoEventSent
         case displayingFreshness
         case completedDisplayingFreshness
+        case completedNoLightCheck
         case completed
         case awaitingDisconnectEvent
         case disconnectEventReceived
@@ -161,7 +167,7 @@ public struct LivenessStateMachine {
         public static let couldNotOpenStream = LivenessError(code: 5, webSocketCloseCode: .unexpectedRuntimeError)
         public static let socketClosed = LivenessError(code: 6, webSocketCloseCode: .normalClosure)
         public static let viewResignation = LivenessError(code: 8, webSocketCloseCode: .viewClosure)
-        public static let cameraNotAvailable = LivenessError(code: 9, webSocketCloseCode: .missingVideoPermission)
+        public static let cameraNotAvailable = LivenessError(code: 9, webSocketCloseCode: .unexpectedRuntimeError)
 
         public static func == (lhs: LivenessError, rhs: LivenessError) -> Bool {
             lhs.code == rhs.code
