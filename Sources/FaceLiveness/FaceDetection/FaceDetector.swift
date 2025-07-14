@@ -13,10 +13,11 @@ public protocol FaceDetector {
     func setResultHandler(detectionResultHandler: FaceDetectionResultHandler)
 }
 
-public  protocol FaceDetectionResultHandler: AnyObject {
+public protocol FaceDetectionResultHandler: AnyObject {
     func process(newResult: FaceDetectionResult)
 }
 
+@_spi(PredictionsFaceLiveness)
 public protocol FaceDetectionSessionConfigurationWrapper: AnyObject {
     var sessionConfiguration: FaceLivenessSession.SessionConfiguration? { get }
 }

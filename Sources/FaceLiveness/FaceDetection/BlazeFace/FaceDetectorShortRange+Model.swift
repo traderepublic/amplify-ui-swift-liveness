@@ -41,7 +41,8 @@ public extension FaceDetectorShortRange {
             self.detectionResultHandler = detectionResultHandler
         }
         
-        func setFaceDetectionSessionConfigurationWrapper(configuration: FaceDetectionSessionConfigurationWrapper) {
+        @_spi(PredictionsFaceLiveness)
+        public func setFaceDetectionSessionConfigurationWrapper(configuration: FaceDetectionSessionConfigurationWrapper) {
             self.faceDetectionSessionConfiguration = configuration
         }
 

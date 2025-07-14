@@ -353,9 +353,9 @@ public enum LivenessCamera {
 }
 
 public struct ChallengeOptions {
-    let faceMovementChallengeOption: FaceMovementChallengeOption
-    let faceMovementAndLightChallengeOption: FaceMovementAndLightChallengeOption
-    
+    public let faceMovementChallengeOption: FaceMovementChallengeOption
+    public let faceMovementAndLightChallengeOption: FaceMovementAndLightChallengeOption
+
     public init(faceMovementChallengeOption: FaceMovementChallengeOption = .init(camera: .front),
                 faceMovementAndLightChallengeOption: FaceMovementAndLightChallengeOption = .init()) {
         self.faceMovementChallengeOption = faceMovementChallengeOption
@@ -364,9 +364,12 @@ public struct ChallengeOptions {
 }
 
 public struct FaceMovementChallengeOption {
-    let challenge: Challenge
-    let camera: LivenessCamera
-    
+    @_spi(PredictionsFaceLiveness)
+    public let challenge: Challenge
+
+    @_spi(PredictionsFaceLiveness)
+    public let camera: LivenessCamera
+
     public init(camera: LivenessCamera) {
         self.challenge = .faceMovementChallenge("1.0.0")
         self.camera = camera
@@ -374,9 +377,12 @@ public struct FaceMovementChallengeOption {
 }
 
 public struct FaceMovementAndLightChallengeOption {
-    let challenge: Challenge
-    let camera: LivenessCamera
-    
+    @_spi(PredictionsFaceLiveness)
+    public let challenge: Challenge
+
+    @_spi(PredictionsFaceLiveness)
+    public let camera: LivenessCamera
+
     public init() {
         self.challenge = .faceMovementAndLightChallenge("2.0.0")
         self.camera = .front

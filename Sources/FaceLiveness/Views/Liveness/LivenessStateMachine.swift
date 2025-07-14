@@ -79,7 +79,7 @@ public struct LivenessStateMachine {
         state = .completedDisplayingFreshness
     }
     
-    mutating func completedNoLightCheck() {
+    public mutating func completedNoLightCheck() {
         state = .completedNoLightCheck
     }
 
