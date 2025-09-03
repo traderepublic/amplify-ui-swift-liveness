@@ -35,8 +35,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @escaping (_ state: LivenessStateMachine.State) -> Loading,
-        @ViewBuilder livenessView: @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder loadingView: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder livenessView: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void
     ) {        
         self.disableStartView = disableStartView
@@ -87,8 +87,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @escaping (_ state: LivenessStateMachine.State) -> Loading,
-        @ViewBuilder livenessView: @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder loadingView: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder livenessView: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void,
         captureSession: LivenessCaptureSession
     ) {
