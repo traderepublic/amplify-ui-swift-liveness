@@ -13,7 +13,7 @@ import AWSPredictionsPlugin
 public struct CameraView: UIViewControllerRepresentable {
     @ObservedObject var faceLivenessDetectionViewModel: FaceLivenessDetectionViewModel
 
-    init(
+    public init(
         faceLivenessDetectionViewModel: FaceLivenessDetectionViewModel
     ) {
         self.faceLivenessDetectionViewModel = faceLivenessDetectionViewModel
