@@ -25,7 +25,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
     let onCompletion: (Result<Void, FaceLivenessDetectionError>) -> Void
 
     let sessionTask: Task<FaceLivenessSession, Error>
-    let loadingView: () -> Loading
+    let loadingView: (LivenessStateMachine.State) -> Loading
     let livenessView: (FaceLivenessDetectionViewModel) -> Liveness
 
     public init(
@@ -35,8 +35,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @escaping () -> Loading,
-        @ViewBuilder livenessView: @escaping (FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder loadingView: @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder livenessView: @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void
     ) {        
         self.disableStartView = disableStartView
@@ -87,8 +87,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @escaping () -> Loading,
-        @ViewBuilder livenessView: @escaping (FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder loadingView: @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder livenessView: @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void,
         captureSession: LivenessCaptureSession
     ) {
@@ -130,7 +130,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         switch displayState {
         case .awaitingChallengeType:
             // LoadingPageView()
-            loadingView()
+            loadingView(viewModel.livenessState.state)
             .onAppear {
                 Task {
                     do {
