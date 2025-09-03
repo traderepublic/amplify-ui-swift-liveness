@@ -8,7 +8,8 @@
 import Foundation
 import SwiftUI
 import AVFoundation
-@_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
+@_spi(PredictionsFaceLiveness)
+import AWSPredictionsPlugin
 
 fileprivate let videoSize: CGSize = .init(width: 480, height: 640)
 fileprivate let defaultNoFitTimeoutInterval: TimeInterval = 7
@@ -21,6 +22,7 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
     @Published public var isRecording = false
     @Published public var livenessState: LivenessStateMachine
 
+    @_spi(PredictionsFaceLiveness)
     public weak var livenessViewControllerDelegate: FaceLivenessViewControllerPresenter?
     var captureSession: LivenessCaptureSession?
     var closeButtonAction: () -> Void

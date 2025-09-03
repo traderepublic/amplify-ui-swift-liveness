@@ -6,7 +6,8 @@
 //
 
 import Foundation
-@_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
+@_spi(PredictionsFaceLiveness)
+import AWSPredictionsPlugin
 
 public struct LivenessStateMachine {
     public private(set) var state: State
@@ -14,7 +15,9 @@ public struct LivenessStateMachine {
     public init(state: LivenessStateMachine.State) {
         self.state = state
     }
+}
 
+public extension LivenessStateMachine {
     mutating func checkIsFacePrepared() {
         guard case .initial = state else { return }
         state = .pendingFacePreparedConfirmation(.pendingCheck)
@@ -97,7 +100,7 @@ public struct LivenessStateMachine {
         }
     }
 
-    public enum State: Equatable {
+    enum State: Equatable {
         case initial
         case awaitingChallengeType
         case pendingFacePreparedConfirmation(FaceNotPreparedReason)
@@ -115,7 +118,7 @@ public struct LivenessStateMachine {
         case waitForRecording
     }
 
-    public enum FaceNotPreparedReason {
+    enum FaceNotPreparedReason {
         case pendingCheck
         case notInOval
         case moveFaceCloser
@@ -153,7 +156,7 @@ public struct LivenessStateMachine {
         }
     }
 
-    public struct LivenessError: Error, Equatable {
+    struct LivenessError: Error, Equatable {
         public let code: UInt8
         public let webSocketCloseCode: URLSessionWebSocketTask.CloseCode?
         
