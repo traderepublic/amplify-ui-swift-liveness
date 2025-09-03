@@ -9,14 +9,15 @@ import UIKit
 import Amplify
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-class Freshness {
+@_spi(PredictionsFaceLiveness)
+public class Freshness {
     var colorSequences: [FaceLivenessSession.DisplayColor] = []
     let tickRate: Double
     let initialAlpha: CGFloat
     let secondaryAlpha: CGFloat
     var timer: Timer? = nil
 
-    init(
+    public init(
         tickRate: Double = 0.01,
         initialAlpha: CGFloat = 0.9,
         secondaryAlpha: CGFloat = 0.75
@@ -33,7 +34,7 @@ class Freshness {
         let colorStartTime: UInt64
     }
 
-    func showColorSequences(
+    public func showColorSequences(
         _ colorSequences: [FaceLivenessSession.DisplayColor],
         width: CGFloat,
         height: CGFloat,
