@@ -8,7 +8,7 @@
 import XCTest
 import SwiftUI
 import AWSPluginsCore
-@testable import FaceLiveness
+@_spi(PredictionsFaceLiveness) @testable import FaceLiveness
 @testable import AWSPredictionsPlugin
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
@@ -63,6 +63,8 @@ final class CredentialsProviderTestCase: XCTestCase {
             challengeOptions: .init(faceMovementChallengeOption: .init(camera: .front), 
                                     faceMovementAndLightChallengeOption: .init()),
             isPresented: .constant(true),
+            loadingView: LoadingPageView.init,
+            livenessView: { _ in EmptyView() },
             onCompletion: { _ in }
         )
 
@@ -101,6 +103,8 @@ final class CredentialsProviderTestCase: XCTestCase {
             challengeOptions: .init(faceMovementChallengeOption: .init(camera: .front),
                                     faceMovementAndLightChallengeOption: .init()),
             isPresented: .constant(true),
+            loadingView: LoadingPageView.init,
+            livenessView: { _ in EmptyView() },
             onCompletion: { _ in }
         )
 

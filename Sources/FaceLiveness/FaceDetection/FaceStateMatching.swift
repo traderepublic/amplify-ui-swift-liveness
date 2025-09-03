@@ -9,8 +9,13 @@ import UIKit
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 import Amplify
 
-struct FaceInOvalMatching {
+public struct FaceInOvalMatching {
     let instructor: Instructor
+
+    public init(instructor: Instructor) {
+        self.instructor = instructor
+    }
+
     private let storage = Storage()
     class Storage {
         var initialIOU: Double?

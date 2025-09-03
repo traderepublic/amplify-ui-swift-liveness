@@ -8,7 +8,7 @@
 import Foundation
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-struct DetectedFace {
+public struct DetectedFace {
     var boundingBox: CGRect
 
     let leftEye: CGPoint

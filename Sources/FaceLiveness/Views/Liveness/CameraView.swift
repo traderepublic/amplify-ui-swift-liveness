@@ -9,7 +9,8 @@ import SwiftUI
 import AVFoundation
 import AWSPredictionsPlugin
 
-struct CameraView: UIViewControllerRepresentable {
+@_spi(PredictionsFaceLiveness)
+public struct CameraView: UIViewControllerRepresentable {
     @ObservedObject var faceLivenessDetectionViewModel: FaceLivenessDetectionViewModel
 
     init(
@@ -18,7 +19,7 @@ struct CameraView: UIViewControllerRepresentable {
         self.faceLivenessDetectionViewModel = faceLivenessDetectionViewModel
     }
 
-    func makeUIViewController(
+    public func makeUIViewController(
         context: Context
     ) -> _LivenessViewController {
         let livenessViewController = _LivenessViewController(
@@ -27,7 +28,7 @@ struct CameraView: UIViewControllerRepresentable {
         return livenessViewController
     }
 
-    func updateUIViewController(
+    public func updateUIViewController(
         _ uiViewController: _LivenessViewController,
         context: Context
     ) {}

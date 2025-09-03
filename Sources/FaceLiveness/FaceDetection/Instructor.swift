@@ -7,8 +7,8 @@
 
 import Foundation
 
-class Instructor {
-    init(
+public class Instructor {
+    public init(
         previousInstruction: Instructor.Instruction? = nil,
         runningCount: Int = 0
     ) {
@@ -16,7 +16,7 @@ class Instructor {
         self.runningCount = runningCount
     }
 
-    enum Instruction: Equatable {
+    public enum Instruction: Equatable {
         case `match`
         case tooFarLeft(
             text: String = "Move head right",
@@ -36,7 +36,7 @@ class Instructor {
         )
         case none
 
-        static func == (lhs: Instruction, rhs: Instruction) -> Bool {
+        public static func == (lhs: Instruction, rhs: Instruction) -> Bool {
             switch (lhs, rhs) {
             case (.match, .match): return true
             case (.tooFarLeft, .tooFarLeft): return true

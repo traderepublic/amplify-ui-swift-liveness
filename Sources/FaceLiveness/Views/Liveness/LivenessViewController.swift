@@ -11,7 +11,8 @@ import Vision
 import Amplify
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-final class _LivenessViewController: UIViewController {
+@_spi(PredictionsFaceLiveness)
+public final class _LivenessViewController: UIViewController {
     let viewModel: FaceLivenessDetectionViewModel
     var previewLayer: CALayer?
 
@@ -45,14 +46,14 @@ final class _LivenessViewController: UIViewController {
         self.previewLayer = nil
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         layoutSubviews()
         setupAVLayer()
     }
 
-    override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         previewLayer?.position = view.center
     }
 
@@ -116,7 +117,7 @@ final class _LivenessViewController: UIViewController {
 }
 
 extension _LivenessViewController: FaceLivenessViewControllerPresenter {
-    func displaySingleFrame(uiImage: UIImage) {
+    public func displaySingleFrame(uiImage: UIImage) {
         DispatchQueue.main.async {
             guard let previewLayer = self.previewLayer else { return }
             let imageView = UIImageView(image: uiImage)
@@ -128,7 +129,7 @@ extension _LivenessViewController: FaceLivenessViewControllerPresenter {
         }
     }
 
-    func displayFreshness(colorSequences: [FaceLivenessSession.DisplayColor]) {
+    public func displayFreshness(colorSequences: [FaceLivenessSession.DisplayColor]) {
         self.ovalView?.setNeedsDisplay()
         DispatchQueue.main.async {
             self.viewModel.livenessState.displayingFreshness()
@@ -150,7 +151,7 @@ extension _LivenessViewController: FaceLivenessViewControllerPresenter {
         )
     }
 
-    func drawOvalInCanvas(_ ovalRect: CGRect) {
+    public func drawOvalInCanvas(_ ovalRect: CGRect) {
         DispatchQueue.main.async {
             guard let previewLayer = self.previewLayer else { return }
 
@@ -170,7 +171,7 @@ extension _LivenessViewController: FaceLivenessViewControllerPresenter {
         }
     }
     
-    func completeNoLightCheck() {
+    public func completeNoLightCheck() {
         self.viewModel.completeNoLightCheck()
     }
 }

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import FaceLiveness
+@_spi(PredictionsFaceLiveness) @testable import FaceLiveness
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
 final class DetectedFaceTests: XCTestCase {

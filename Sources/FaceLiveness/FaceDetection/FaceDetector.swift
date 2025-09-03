@@ -8,12 +8,12 @@
 import AVFoundation
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-protocol FaceDetector {
+public protocol FaceDetector {
     func detectFaces(from buffer: CVPixelBuffer)
     func setResultHandler(detectionResultHandler: FaceDetectionResultHandler)
 }
 
-protocol FaceDetectionResultHandler: AnyObject {
+public protocol FaceDetectionResultHandler: AnyObject {
     func process(newResult: FaceDetectionResult)
 }
 
@@ -21,7 +21,7 @@ protocol FaceDetectionSessionConfigurationWrapper: AnyObject {
     var sessionConfiguration: FaceLivenessSession.SessionConfiguration? { get }
 }
 
-enum FaceDetectionResult {
+public enum FaceDetectionResult {
     case noFace
     case singleFace(DetectedFace)
     case multipleFaces

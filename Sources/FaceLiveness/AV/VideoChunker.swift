@@ -9,7 +9,7 @@ import AVFoundation
 import CoreImage
 import UIKit
 
-final class VideoChunker {
+public final class VideoChunker {
     var state = State.pending
     let assetWriter: AVAssetWriter
     let assetWriterDelegate: AssetWriterDelegate
@@ -18,7 +18,7 @@ final class VideoChunker {
     var startTimeSeconds: Double?
     var provideSingleFrame: ((UIImage) -> Void)?
 
-    init(
+    public init(
         assetWriter: AVAssetWriter,
         assetWriterDelegate: AssetWriterDelegate,
         assetWriterInput: AVAssetWriterInput

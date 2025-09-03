@@ -8,10 +8,10 @@
 import Foundation
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-struct LivenessStateMachine {
-    private(set) var state: State
+public struct LivenessStateMachine {
+    public private(set) var state: State
 
-    init(state: LivenessStateMachine.State) {
+    public init(state: LivenessStateMachine.State) {
         self.state = state
     }
 
@@ -97,7 +97,7 @@ struct LivenessStateMachine {
         }
     }
 
-    enum State: Equatable {
+    public enum State: Equatable {
         case initial
         case awaitingChallengeType
         case pendingFacePreparedConfirmation(FaceNotPreparedReason)
@@ -115,7 +115,7 @@ struct LivenessStateMachine {
         case waitForRecording
     }
 
-    enum FaceNotPreparedReason {
+    public enum FaceNotPreparedReason {
         case pendingCheck
         case notInOval
         case moveFaceCloser
@@ -127,7 +127,7 @@ struct LivenessStateMachine {
         case multipleFaces
         case faceTooClose
         
-        var localizedValue: String {
+        public var localizedValue: String {
             switch self {
             case .pendingCheck:
                 return LocalizedStrings.amplify_ui_liveness_face_not_prepared_reason_pendingCheck
@@ -153,21 +153,21 @@ struct LivenessStateMachine {
         }
     }
 
-    struct LivenessError: Error, Equatable {
-        let code: UInt8
-        let webSocketCloseCode: URLSessionWebSocketTask.CloseCode?
+    public struct LivenessError: Error, Equatable {
+        public let code: UInt8
+        public let webSocketCloseCode: URLSessionWebSocketTask.CloseCode?
         
-        static let unknown = LivenessError(code: 0, webSocketCloseCode: .unexpectedRuntimeError)
-        static let missingVideoPermission = LivenessError(code: 1, webSocketCloseCode: .missingVideoPermission)
-        static let errorWithUnderlyingOSFramework = LivenessError(code: 2, webSocketCloseCode: .unexpectedRuntimeError)
-        static let userCancelled = LivenessError(code: 3, webSocketCloseCode: .ovalFitUserClosedSession)
-        static let timedOut = LivenessError(code: 4, webSocketCloseCode: .ovalFitMatchTimeout)
-        static let couldNotOpenStream = LivenessError(code: 5, webSocketCloseCode: .unexpectedRuntimeError)
-        static let socketClosed = LivenessError(code: 6, webSocketCloseCode: .normalClosure)
-        static let viewResignation = LivenessError(code: 8, webSocketCloseCode: .viewClosure)
-        static let cameraNotAvailable = LivenessError(code: 9, webSocketCloseCode: .unexpectedRuntimeError)
+        public static let unknown = LivenessError(code: 0, webSocketCloseCode: .unexpectedRuntimeError)
+        public static let missingVideoPermission = LivenessError(code: 1, webSocketCloseCode: .missingVideoPermission)
+        public static let errorWithUnderlyingOSFramework = LivenessError(code: 2, webSocketCloseCode: .unexpectedRuntimeError)
+        public static let userCancelled = LivenessError(code: 3, webSocketCloseCode: .ovalFitUserClosedSession)
+        public static let timedOut = LivenessError(code: 4, webSocketCloseCode: .ovalFitMatchTimeout)
+        public static let couldNotOpenStream = LivenessError(code: 5, webSocketCloseCode: .unexpectedRuntimeError)
+        public static let socketClosed = LivenessError(code: 6, webSocketCloseCode: .normalClosure)
+        public static let viewResignation = LivenessError(code: 8, webSocketCloseCode: .viewClosure)
+        public static let cameraNotAvailable = LivenessError(code: 9, webSocketCloseCode: .unexpectedRuntimeError)
 
-        static func == (lhs: LivenessError, rhs: LivenessError) -> Bool {
+        public static func == (lhs: LivenessError, rhs: LivenessError) -> Bool {
             lhs.code == rhs.code
         }
     }
