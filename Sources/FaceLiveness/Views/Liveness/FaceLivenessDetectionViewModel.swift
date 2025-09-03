@@ -8,19 +8,22 @@
 import Foundation
 import SwiftUI
 import AVFoundation
-@_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
+@_spi(PredictionsFaceLiveness)
+import AWSPredictionsPlugin
 
 fileprivate let videoSize: CGSize = .init(width: 480, height: 640)
 fileprivate let defaultNoFitTimeoutInterval: TimeInterval = 7
 fileprivate let defaultAttemptCountResetInterval: TimeInterval = 300.0
 
+@_spi(PredictionsFaceLiveness)
 @MainActor
-class FaceLivenessDetectionViewModel: ObservableObject {
-    @Published var readyForOval = false
-    @Published var isRecording = false
-    @Published var livenessState: LivenessStateMachine
+public class FaceLivenessDetectionViewModel: ObservableObject {
+    @Published public var readyForOval = false
+    @Published public var isRecording = false
+    @Published public var livenessState: LivenessStateMachine
 
-    weak var livenessViewControllerDelegate: FaceLivenessViewControllerPresenter?
+    @_spi(PredictionsFaceLiveness)
+    public weak var livenessViewControllerDelegate: FaceLivenessViewControllerPresenter?
     var captureSession: LivenessCaptureSession?
     var closeButtonAction: () -> Void
     let videoChunker: VideoChunker
@@ -34,11 +37,11 @@ class FaceLivenessDetectionViewModel: ObservableObject {
     var hasSentFinalVideoEvent = false
     var hasSentFirstVideo = false
     var layerRectConverted: (CGRect) -> CGRect = { $0 }
-    var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
+    public var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
     var challengeReceived: Challenge?
-    var normalizeFace: (DetectedFace) -> DetectedFace = { $0 }
+    public var normalizeFace: @MainActor (DetectedFace) -> DetectedFace = { $0 }
     var provideSingleFrame: ((UIImage) -> Void)?
-    var cameraViewRect = CGRect.zero
+    public var cameraViewRect = CGRect.zero
     var ovalRect = CGRect.zero
     var initialClientEvent: InitialClientEvent?
     var faceMatchedTimestamp: UInt64?
@@ -65,7 +68,7 @@ class FaceLivenessDetectionViewModel: ObservableObject {
         return TimeInterval(sessionTimeoutMilliSec/1_000)
     }
     
-    init(
+    public init(
         faceDetector: FaceDetector,
         faceInOvalMatching: FaceInOvalMatching,
         videoChunker: VideoChunker,
@@ -146,7 +149,9 @@ class FaceLivenessDetectionViewModel: ObservableObject {
             self.livenessState.unrecoverableStateEncountered(.viewResignation)
         }
     }
+}
 
+public extension FaceLivenessDetectionViewModel {
     func startSession() {
         captureSession?.startSession()
     }
@@ -439,4 +444,4 @@ class FaceLivenessDetectionViewModel: ObservableObject {
     }
 }
 
-extension FaceLivenessDetectionViewModel: FaceDetectionSessionConfigurationWrapper { }
+extension FaceLivenessDetectionViewModel: @preconcurrency FaceDetectionSessionConfigurationWrapper { }

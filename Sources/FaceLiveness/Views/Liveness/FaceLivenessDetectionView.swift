@@ -13,7 +13,8 @@ import AVFoundation
 import Amplify
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
-public struct FaceLivenessDetectorView: View {
+@_spi(PredictionsFaceLiveness)
+public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
     @StateObject var viewModel: FaceLivenessDetectionViewModel
     @Binding var isPresented: Bool
     @State var displayState: DisplayState = .awaitingChallengeType
@@ -24,6 +25,8 @@ public struct FaceLivenessDetectorView: View {
     let onCompletion: (Result<Void, FaceLivenessDetectionError>) -> Void
 
     let sessionTask: Task<FaceLivenessSession, Error>
+    let loadingView: (LivenessStateMachine.State) -> Loading
+    let livenessView: (FaceLivenessDetectionViewModel) -> Liveness
 
     public init(
         sessionID: String,
@@ -32,12 +35,16 @@ public struct FaceLivenessDetectorView: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
+        @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void
     ) {        
         self.disableStartView = disableStartView
         self._isPresented = isPresented
         self.onCompletion = onCompletion
         self.challengeOptions = challengeOptions
+        self.loadingView = onAwaitingChallengeType
+        self.livenessView = onDisplayingLiveness
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(
@@ -80,6 +87,8 @@ public struct FaceLivenessDetectorView: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
+        @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void,
         captureSession: LivenessCaptureSession
     ) {
@@ -87,6 +96,8 @@ public struct FaceLivenessDetectorView: View {
         self._isPresented = isPresented
         self.onCompletion = onCompletion
         self.challengeOptions = challengeOptions
+        self.loadingView = onAwaitingChallengeType
+        self.livenessView = onDisplayingLiveness
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(
@@ -118,7 +129,8 @@ public struct FaceLivenessDetectorView: View {
     public var body: some View {
         switch displayState {
         case .awaitingChallengeType:
-            LoadingPageView()
+            // LoadingPageView()
+            loadingView(viewModel.livenessState.state)
             .onAppear {
                 Task {
                     do {
@@ -211,19 +223,20 @@ public struct FaceLivenessDetectorView: View {
                 }
             }
         case .displayingLiveness:
-            _FaceLivenessDetectionView(
-                viewModel: viewModel,
-                videoView: {
-                    CameraView(
-                        faceLivenessDetectionViewModel: viewModel
-                    )
-                }
-            )
-            .onAppear {
-                DispatchQueue.main.async {
-                    UIScreen.main.brightness = 1.0
-                }
-            }
+            // _FaceLivenessDetectionView(
+            //     viewModel: viewModel,
+            //     videoView: {
+            //         CameraView(
+            //             faceLivenessDetectionViewModel: viewModel
+            //         )
+            //     }
+            // )
+            // .onAppear {
+            //     DispatchQueue.main.async {
+            //         UIScreen.main.brightness = 1.0
+            //     }
+            // }
+            livenessView(viewModel)
             .onDisappear() {
                 viewModel.stopRecording()
             }

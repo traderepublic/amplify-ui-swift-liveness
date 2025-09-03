@@ -17,7 +17,7 @@ import VideoToolbox
 public enum FaceDetectorShortRange {}
 
 public extension FaceDetectorShortRange {
-    public final class Model: FaceDetector {
+    final class Model: FaceDetector {
         var model: MLModel
         let confidenceScoreThreshold: Float = 0.7
         let weightedNonMaxSuppressionThreshold: Float = 0.3

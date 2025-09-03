@@ -12,11 +12,7 @@ import Amplify
 public struct FaceInOvalMatching {
     let instructor: Instructor
 
-    public init() {
-        self.init(instructor: Instructor())
-    }
-
-    init(instructor: Instructor) {
+    public init(instructor: Instructor) {
         self.instructor = instructor
     }
 
@@ -25,8 +21,7 @@ public struct FaceInOvalMatching {
         var initialIOU: Double?
     }
     
-    @_spi(PredictionsFaceLiveness)
-    public func faceMatchState(
+    func faceMatchState(
         for face: CGRect,
         in ovalRect: CGRect?,
         challengeConfig: FaceLivenessSession.OvalMatchChallenge

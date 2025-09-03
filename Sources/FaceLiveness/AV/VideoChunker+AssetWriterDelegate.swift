@@ -7,7 +7,7 @@
 
 import AVFoundation
 
-public extension VideoChunker {
+extension VideoChunker {
     public class AssetWriterDelegate: NSObject, AVAssetWriterDelegate {
         private var initialSegmentData: Data?
         private weak var segmentProcessor: VideoSegmentProcessor?

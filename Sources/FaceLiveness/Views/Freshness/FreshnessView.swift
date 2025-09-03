@@ -7,6 +7,7 @@
 
 import UIKit
 
+@_spi(PredictionsFaceLiveness)
 public final class FreshnessView: UIView {
     let oldRectangle = UIView()
     let fractionalRectangle = UIView()

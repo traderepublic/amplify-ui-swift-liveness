@@ -11,8 +11,8 @@ import SwiftUI
 
 fileprivate let initialFaceDistanceThreshold: CGFloat = 0.32
 
-extension FaceLivenessDetectionViewModel: FaceDetectionResultHandler {
-    func process(newResult: FaceDetectionResult) {
+extension FaceLivenessDetectionViewModel: @preconcurrency FaceDetectionResultHandler {
+    public func process(newResult: FaceDetectionResult) {
         switch newResult {
         case .noFace:
             if case .pendingFacePreparedConfirmation = livenessState.state {

@@ -1,6 +1,6 @@
 import XCTest
 import Combine
-@testable import FaceLiveness
+@_spi(PredictionsFaceLiveness) @testable import FaceLiveness
 @_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
 
 @MainActor

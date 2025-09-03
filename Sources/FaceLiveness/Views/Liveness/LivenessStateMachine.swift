@@ -6,28 +6,29 @@
 //
 
 import Foundation
-@_spi(PredictionsFaceLiveness) import AWSPredictionsPlugin
+@_spi(PredictionsFaceLiveness)
+import AWSPredictionsPlugin
 
 public struct LivenessStateMachine {
     public private(set) var state: State
 
-    public init(
-        state: LivenessStateMachine.State
-    ) {
+    public init(state: LivenessStateMachine.State) {
         self.state = state
     }
+}
 
-    public mutating func checkIsFacePrepared() {
+public extension LivenessStateMachine {
+    mutating func checkIsFacePrepared() {
         guard case .initial = state else { return }
         state = .pendingFacePreparedConfirmation(.pendingCheck)
     }
 
-    public mutating func faceNotPrepared(reason: FaceNotPreparedReason) {
+    mutating func faceNotPrepared(reason: FaceNotPreparedReason) {
         guard case .pendingFacePreparedConfirmation = state else { return }
         state = .pendingFacePreparedConfirmation(reason)
     }
 
-    public mutating func awaitingFaceMatch(with instruction: Instructor.Instruction, nearnessPercentage: Double) {
+    mutating func awaitingFaceMatch(with instruction: Instructor.Instruction, nearnessPercentage: Double) {
         let reason: FaceNotPreparedReason
         let percentage: Double
         switch instruction {
@@ -49,12 +50,12 @@ public struct LivenessStateMachine {
         state = .awaitingFaceInOvalMatch(reason, percentage)
     }
 
-    public mutating func awaitingRecording() {
+    mutating func awaitingRecording() {
         guard case .pendingFacePreparedConfirmation = state else { return }
         state = .waitForRecording
     }
 
-    public mutating func unrecoverableStateEncountered(_ error: LivenessError) {
+    mutating func unrecoverableStateEncountered(_ error: LivenessError) {
         switch state {
         case .encounteredUnrecoverableError, .completed:
             return
@@ -63,31 +64,31 @@ public struct LivenessStateMachine {
         }
     }
 
-    public mutating func beginRecording() {
+    mutating func beginRecording() {
         state = .recording(ovalDisplayed: false)
     }
 
-    public mutating func ovalDisplayed() {
+    mutating func ovalDisplayed() {
         state = .recording(ovalDisplayed: true)
     }
 
-    public mutating func faceMatched() {
+    mutating func faceMatched() {
         state = .faceMatched
     }
 
-    public mutating func completedDisplayingFreshness() {
+    mutating func completedDisplayingFreshness() {
         state = .completedDisplayingFreshness
     }
     
-    public mutating func completedNoLightCheck() {
+    mutating func completedNoLightCheck() {
         state = .completedNoLightCheck
     }
 
-    public mutating func displayingFreshness() {
+    mutating func displayingFreshness() {
         state = .displayingFreshness
     }
 
-    public mutating func complete() {
+    mutating func complete() {
         state = .completed
     }
 
@@ -99,7 +100,7 @@ public struct LivenessStateMachine {
         }
     }
 
-    public enum State: Equatable {
+    enum State: Equatable {
         case initial
         case awaitingChallengeType
         case pendingFacePreparedConfirmation(FaceNotPreparedReason)
@@ -117,7 +118,7 @@ public struct LivenessStateMachine {
         case waitForRecording
     }
 
-    public enum FaceNotPreparedReason {
+    enum FaceNotPreparedReason {
         case pendingCheck
         case notInOval
         case moveFaceCloser
@@ -155,8 +156,8 @@ public struct LivenessStateMachine {
         }
     }
 
-    public struct LivenessError: Error, Equatable {
-        let code: UInt8
+    struct LivenessError: Error, Equatable {
+        public let code: UInt8
         public let webSocketCloseCode: URLSessionWebSocketTask.CloseCode?
 
         public static let unknown = LivenessError(code: 0, webSocketCloseCode: .unexpectedRuntimeError)

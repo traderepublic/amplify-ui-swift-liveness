@@ -20,12 +20,9 @@ public struct DetectedFace {
 
     let confidence: Float
 
-    @_spi(PredictionsFaceLiveness)
-    public func boundingBoxFromLandmarks(
-        ovalRect: CGRect,
-        ovalMatchChallenge: FaceLivenessSession.OvalMatchChallenge
-    ) -> CGRect {
-        let alpha = 2.0
+    func boundingBoxFromLandmarks(ovalRect: CGRect,
+                                  ovalMatchChallenge: FaceLivenessSession.OvalMatchChallenge) -> CGRect {
+		let alpha = 2.0
         let gamma = 1.8
         let ow = (alpha * pupilDistance + gamma * faceHeight) / 2
         var cx = (eyeCenterX + nose.x) / 2
@@ -50,11 +47,11 @@ public struct DetectedFace {
         return rect
     }
 
-    public var faceDistance: CGFloat {
+    var faceDistance: CGFloat {
         sqrt(pow(rightEye.x - leftEye.x, 2) + pow(rightEye.y - leftEye.y, 2))
     }
     
-    public var pupilDistance: CGFloat {
+    var pupilDistance: CGFloat {
         sqrt(pow(leftEye.x - rightEye.x, 2) + pow(leftEye.y - rightEye.y, 2))
     }
     
