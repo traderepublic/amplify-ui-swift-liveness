@@ -35,16 +35,16 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
-        @ViewBuilder livenessView: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void
     ) {        
         self.disableStartView = disableStartView
         self._isPresented = isPresented
         self.onCompletion = onCompletion
         self.challengeOptions = challengeOptions
-        self.loadingView = loadingView
-        self.livenessView = livenessView
+        self.loadingView = onAwaitingChallengeType
+        self.livenessView = onDisplayingLiveness
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(
@@ -87,8 +87,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         disableStartView: Bool = false,
         challengeOptions: ChallengeOptions = .init(),
         isPresented: Binding<Bool>,
-        @ViewBuilder loadingView: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
-        @ViewBuilder livenessView: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
+        @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void,
         captureSession: LivenessCaptureSession
     ) {
@@ -96,8 +96,8 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         self._isPresented = isPresented
         self.onCompletion = onCompletion
         self.challengeOptions = challengeOptions
-        self.loadingView = loadingView
-        self.livenessView = livenessView
+        self.loadingView = onAwaitingChallengeType
+        self.livenessView = onDisplayingLiveness
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(

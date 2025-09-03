@@ -63,8 +63,8 @@ final class CredentialsProviderTestCase: XCTestCase {
             challengeOptions: .init(faceMovementChallengeOption: .init(camera: .front), 
                                     faceMovementAndLightChallengeOption: .init()),
             isPresented: .constant(true),
-            loadingView: { _ in LoadingPageView() },
-            livenessView: { _ in EmptyView() },
+            onAwaitingChallengeType: { _ in LoadingPageView() },
+            onDisplayingLiveness: { _ in EmptyView() },
             onCompletion: { _ in }
         )
 
@@ -103,8 +103,8 @@ final class CredentialsProviderTestCase: XCTestCase {
             challengeOptions: .init(faceMovementChallengeOption: .init(camera: .front),
                                     faceMovementAndLightChallengeOption: .init()),
             isPresented: .constant(true),
-            loadingView: { _ in LoadingPageView() },
-            livenessView: { _ in EmptyView() },
+            onAwaitingChallengeType: { _ in LoadingPageView() },
+            onDisplayingLiveness: { _ in EmptyView() },
             onCompletion: { _ in }
         )
 
