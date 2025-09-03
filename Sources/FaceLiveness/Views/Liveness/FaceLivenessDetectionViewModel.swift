@@ -35,9 +35,9 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
     var hasSentFinalVideoEvent = false
     var hasSentFirstVideo = false
     var layerRectConverted: (CGRect) -> CGRect = { $0 }
-    public var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
+    public private(set) var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
     var challengeReceived: Challenge?
-    var normalizeFace: (DetectedFace) -> DetectedFace = { $0 }
+    public private(set) var normalizeFace: (DetectedFace) -> DetectedFace = { $0 }
     var provideSingleFrame: ((UIImage) -> Void)?
     var cameraViewRect = CGRect.zero
     var ovalRect = CGRect.zero
