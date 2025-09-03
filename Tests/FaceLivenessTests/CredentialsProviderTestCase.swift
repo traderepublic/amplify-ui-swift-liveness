@@ -63,9 +63,11 @@ final class CredentialsProviderTestCase: XCTestCase {
             challengeOptions: .init(faceMovementChallengeOption: .init(camera: .front), 
                                     faceMovementAndLightChallengeOption: .init()),
             isPresented: .constant(true),
-            onAwaitingChallengeType: { _ in LoadingPageView() },
+            onAwaitingChallengeType: { _ in LoadingPageView()
+            },
             onDisplayingLiveness: { _ in EmptyView() },
-            onCompletion: { _ in }
+            onStateChange: { _ in },
+            onCompletion: { _ in },
         )
 
         let session = try await liveness.sessionTask.value
@@ -105,6 +107,7 @@ final class CredentialsProviderTestCase: XCTestCase {
             isPresented: .constant(true),
             onAwaitingChallengeType: { _ in LoadingPageView() },
             onDisplayingLiveness: { _ in EmptyView() },
+            onStateChange: { _ in },
             onCompletion: { _ in }
         )
 

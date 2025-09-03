@@ -25,8 +25,9 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
     let onCompletion: (Result<Void, FaceLivenessDetectionError>) -> Void
 
     let sessionTask: Task<FaceLivenessSession, Error>
-    let loadingView: (LivenessStateMachine.State) -> Loading
-    let livenessView: (FaceLivenessDetectionViewModel) -> Liveness
+    let loadingView: @MainActor (LivenessStateMachine.State) -> Loading
+    let livenessView: @MainActor (FaceLivenessDetectionViewModel) -> Liveness
+    let stateChangeHandler: @MainActor (LivenessStateMachine.State) -> Void
 
     public init(
         sessionID: String,
@@ -37,6 +38,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         isPresented: Binding<Bool>,
         @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
         @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        onStateChange: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Void,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void
     ) {        
         self.disableStartView = disableStartView
@@ -45,6 +47,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         self.challengeOptions = challengeOptions
         self.loadingView = onAwaitingChallengeType
         self.livenessView = onDisplayingLiveness
+        self.stateChangeHandler = onStateChange
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(
@@ -89,6 +92,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         isPresented: Binding<Bool>,
         @ViewBuilder onAwaitingChallengeType: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Loading,
         @ViewBuilder onDisplayingLiveness: @MainActor @escaping (_ viewModel: FaceLivenessDetectionViewModel) -> Liveness,
+        onLivenessStateChange: @MainActor @escaping (_ state: LivenessStateMachine.State) -> Void,
         onCompletion: @escaping (Result<Void, FaceLivenessDetectionError>) -> Void,
         captureSession: LivenessCaptureSession
     ) {
@@ -98,6 +102,7 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
         self.challengeOptions = challengeOptions
         self.loadingView = onAwaitingChallengeType
         self.livenessView = onDisplayingLiveness
+        self.stateChangeHandler = onLivenessStateChange
 
         self.sessionTask = Task {
             let session = try await AWSPredictionsPlugin.startFaceLivenessSession(
@@ -127,134 +132,140 @@ public struct FaceLivenessDetectorView<Loading: View, Liveness: View>: View {
     }
 
     public var body: some View {
-        switch displayState {
-        case .awaitingChallengeType:
-            // LoadingPageView()
-            loadingView(viewModel.livenessState.state)
-            .onAppear {
-                Task {
-                    do {
-                        let session = try await sessionTask.value
-                        viewModel.livenessService = session
-                        viewModel.registerServiceEvents(onChallengeTypeReceived: { challenge in
-                            self.displayState = DisplayState.awaitingCameraPermission(challenge)
-                        })
-                        viewModel.initializeLivenessStream()
-                    } catch let error as FaceLivenessDetectionError {
-                        switch error {
-                        case .unknown:
-                            viewModel.livenessState.unrecoverableStateEncountered(.unknown)
-                        case .sessionTimedOut,
-                             .faceInOvalMatchExceededTimeLimitError,
-                             .countdownFaceTooClose,
-                             .countdownMultipleFaces,
-                             .countdownNoFace:
-                            viewModel.livenessState.unrecoverableStateEncountered(.timedOut)
-                        case .cameraPermissionDenied:
-                            viewModel.livenessState.unrecoverableStateEncountered(.missingVideoPermission)
-                        case .userCancelled:
-                            viewModel.livenessState.unrecoverableStateEncountered(.userCancelled)
-                        case .socketClosed:
-                            viewModel.livenessState.unrecoverableStateEncountered(.socketClosed)
-                        case .cameraNotAvailable:
-                            viewModel.livenessState.unrecoverableStateEncountered(.cameraNotAvailable)
+        Group {
+            switch displayState {
+            case .awaitingChallengeType:
+                // LoadingPageView()
+                loadingView(viewModel.livenessState.state)
+                    .onAppear {
+                        Task {
+                            do {
+                                let session = try await sessionTask.value
+                                viewModel.livenessService = session
+                                viewModel.registerServiceEvents(onChallengeTypeReceived: { challenge in
+                                    self.displayState = DisplayState.awaitingCameraPermission(challenge)
+                                })
+                                viewModel.initializeLivenessStream()
+                            } catch let error as FaceLivenessDetectionError {
+                                switch error {
+                                case .unknown:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.unknown)
+                                case .sessionTimedOut,
+                                        .faceInOvalMatchExceededTimeLimitError,
+                                        .countdownFaceTooClose,
+                                        .countdownMultipleFaces,
+                                        .countdownNoFace:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.timedOut)
+                                case .cameraPermissionDenied:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.missingVideoPermission)
+                                case .userCancelled:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.userCancelled)
+                                case .socketClosed:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.socketClosed)
+                                case .cameraNotAvailable:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.cameraNotAvailable)
+                                default:
+                                    viewModel.livenessState.unrecoverableStateEncountered(.couldNotOpenStream)
+                                }
+                            } catch {
+                                viewModel.livenessState.unrecoverableStateEncountered(.couldNotOpenStream)
+                            }
+
+                            DispatchQueue.main.async {
+                                if let faceDetector = viewModel.faceDetector as? FaceDetectorShortRange.Model {
+                                    faceDetector.setFaceDetectionSessionConfigurationWrapper(configuration: viewModel)
+                                }
+                            }
+                        }
+                    }
+                    .onReceive(viewModel.$livenessState) { output in
+                        switch output.state {
+                        case .encounteredUnrecoverableError(let error):
+                            let closeCode = error.webSocketCloseCode ?? .normalClosure
+                            viewModel.livenessService?.closeSocket(with: closeCode)
+                            isPresented = false
+                            onCompletion(.failure(mapError(error)))
                         default:
-                            viewModel.livenessState.unrecoverableStateEncountered(.couldNotOpenStream)
+                            break
                         }
-                    } catch {
-                        viewModel.livenessState.unrecoverableStateEncountered(.couldNotOpenStream)
                     }
-                    
+            case .awaitingCameraPermission(let challenge):
+                CameraPermissionView(displayingCameraPermissionsNeededAlert: $displayingCameraPermissionsNeededAlert)
+                    .onAppear {
+                        checkCameraPermission(for: challenge)
+                    }
+            case .awaitingLivenessSession(let challenge):
+                Color.clear
+                    .onAppear {
+                        Task {
+                            let cameraPosition: LivenessCamera
+                            switch challenge {
+                            case .faceMovementAndLightChallenge:
+                                cameraPosition = challengeOptions.faceMovementAndLightChallengeOption.camera
+                            case .faceMovementChallenge:
+                                cameraPosition = challengeOptions.faceMovementChallengeOption.camera
+                            }
+
+                            let newState = disableStartView
+                            ? DisplayState.displayingLiveness
+                            : DisplayState.displayingGetReadyView(challenge, cameraPosition)
+                            guard self.displayState != newState else { return }
+                            self.displayState = newState
+                        }
+                    }
+            case .displayingGetReadyView(let challenge, let cameraPosition):
+                GetReadyPageView(
+                    onBegin: {
+                        guard displayState != .displayingLiveness else { return }
+                        displayState = .displayingLiveness
+                    },
+                    beginCheckButtonDisabled: false,
+                    challenge: challenge,
+                    cameraPosition: cameraPosition
+                )
+                .onAppear {
                     DispatchQueue.main.async {
-                        if let faceDetector = viewModel.faceDetector as? FaceDetectorShortRange.Model {
-                            faceDetector.setFaceDetectionSessionConfigurationWrapper(configuration: viewModel)
-                        }
+                        UIScreen.main.brightness = 1.0
                     }
                 }
-            }
-            .onReceive(viewModel.$livenessState) { output in
-                switch output.state {
-                case .encounteredUnrecoverableError(let error):
-                    let closeCode = error.webSocketCloseCode ?? .normalClosure
-                    viewModel.livenessService?.closeSocket(with: closeCode)
-                    isPresented = false
-                    onCompletion(.failure(mapError(error)))
-                default:
-                    break
-                }
-            }
-        case .awaitingCameraPermission(let challenge):
-            CameraPermissionView(displayingCameraPermissionsNeededAlert: $displayingCameraPermissionsNeededAlert)
-                .onAppear {
-                    checkCameraPermission(for: challenge)
-                }
-        case .awaitingLivenessSession(let challenge):
-            Color.clear
-                .onAppear {
-                    Task {
-                        let cameraPosition: LivenessCamera
-                        switch challenge {
-                        case .faceMovementAndLightChallenge:
-                            cameraPosition = challengeOptions.faceMovementAndLightChallengeOption.camera
-                        case .faceMovementChallenge:
-                            cameraPosition = challengeOptions.faceMovementChallengeOption.camera
-                        }
-                        
-                        let newState = disableStartView
-                        ? DisplayState.displayingLiveness
-                        : DisplayState.displayingGetReadyView(challenge, cameraPosition)
-                        guard self.displayState != newState else { return }
-                        self.displayState = newState
+            case .displayingLiveness:
+                // _FaceLivenessDetectionView(
+                //     viewModel: viewModel,
+                //     videoView: {
+                //         CameraView(
+                //             faceLivenessDetectionViewModel: viewModel
+                //         )
+                //     }
+                // )
+                // .onAppear {
+                //     DispatchQueue.main.async {
+                //         UIScreen.main.brightness = 1.0
+                //     }
+                // }
+                livenessView(viewModel)
+                    .onDisappear() {
+                        viewModel.stopRecording()
                     }
-                }
-        case .displayingGetReadyView(let challenge, let cameraPosition):
-            GetReadyPageView(
-                onBegin: {
-                    guard displayState != .displayingLiveness else { return }
-                    displayState = .displayingLiveness
-                },
-                beginCheckButtonDisabled: false,
-                challenge: challenge,
-                cameraPosition: cameraPosition
-            )
-            .onAppear {
-                DispatchQueue.main.async {
-                    UIScreen.main.brightness = 1.0
-                }
-            }
-        case .displayingLiveness:
-            // _FaceLivenessDetectionView(
-            //     viewModel: viewModel,
-            //     videoView: {
-            //         CameraView(
-            //             faceLivenessDetectionViewModel: viewModel
-            //         )
-            //     }
-            // )
-            // .onAppear {
-            //     DispatchQueue.main.async {
-            //         UIScreen.main.brightness = 1.0
-            //     }
-            // }
-            livenessView(viewModel)
-            .onDisappear() {
-                viewModel.stopRecording()
-            }
-            .onReceive(viewModel.$livenessState) { output in
-                switch output.state {
-                case .completed:
-                    isPresented = false
-                    onCompletion(.success(()))
-                case .encounteredUnrecoverableError(let error):
-                    let closeCode = error.webSocketCloseCode ?? .normalClosure
-                    viewModel.livenessService?.closeSocket(with: closeCode)
-                    isPresented = false
-                    onCompletion(.failure(mapError(error)))
-                default:
-                    break
-                }
+                    .onReceive(viewModel.$livenessState) { output in
+                        switch output.state {
+                        case .completed:
+                            isPresented = false
+                            onCompletion(.success(()))
+                        case .encounteredUnrecoverableError(let error):
+                            let closeCode = error.webSocketCloseCode ?? .normalClosure
+                            viewModel.livenessService?.closeSocket(with: closeCode)
+                            isPresented = false
+                            onCompletion(.failure(mapError(error)))
+                        default:
+                            break
+                        }
+                    }
             }
         }
+        .onChange(
+            of: viewModel.livenessState.state,
+            perform: stateChangeHandler
+        )
     }
 
     func mapError(_ livenessError: LivenessStateMachine.LivenessError) -> FaceLivenessDetectionError {
