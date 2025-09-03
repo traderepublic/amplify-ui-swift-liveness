@@ -35,25 +35,25 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
     var hasSentFinalVideoEvent = false
     var hasSentFirstVideo = false
     var layerRectConverted: (CGRect) -> CGRect = { $0 }
-    public private(set) var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
+    var sessionConfiguration: FaceLivenessSession.SessionConfiguration?
     var challengeReceived: Challenge?
-    public private(set) var normalizeFace: (DetectedFace) -> DetectedFace = { $0 }
+    public var normalizeFace: @MainActor (DetectedFace) -> DetectedFace = { $0 }
     var provideSingleFrame: ((UIImage) -> Void)?
-    var cameraViewRect = CGRect.zero
+    public var cameraViewRect = CGRect.zero
     var ovalRect = CGRect.zero
     var initialClientEvent: InitialClientEvent?
     var faceMatchedTimestamp: UInt64?
     var noFitStartTime: Date?
     let challengeOptions: ChallengeOptions
-    
+
     static var attemptCount: Int = 0
     static var attemptIdTimeStamp: Date = Date()
-    
+
     var noFitTimeoutInterval: TimeInterval {
         guard let sessionConfiguration = sessionConfiguration else {
             return defaultNoFitTimeoutInterval
         }
-        
+
         let ovalMatchChallenge: FaceLivenessSession.OvalMatchChallenge
         switch sessionConfiguration{
         case .faceMovement(let challenge):
@@ -61,11 +61,11 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
         case .faceMovementAndLight(_, let challenge):
             ovalMatchChallenge = challenge
         }
-        
+
         let sessionTimeoutMilliSec = ovalMatchChallenge.oval.ovalFitTimeout
         return TimeInterval(sessionTimeoutMilliSec/1_000)
     }
-    
+
     public init(
         faceDetector: FaceDetector,
         faceInOvalMatching: FaceInOvalMatching,
@@ -130,7 +130,7 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
             },
             on: .challenge
         )
-        
+
         livenessService?.register(
             listener: { [weak self] _challenge in
                 self?.challengeReceived = _challenge
@@ -147,7 +147,9 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
             self.livenessState.unrecoverableStateEncountered(.viewResignation)
         }
     }
+}
 
+public extension FaceLivenessDetectionViewModel {
     func startSession() {
         captureSession?.startSession()
     }

@@ -27,11 +27,11 @@ public class Freshness {
         self.secondaryAlpha = secondaryAlpha
     }
 
-    struct ColorEvent {
-        let currentColor: FaceLivenessSession.DisplayColor
-        let previousColor: FaceLivenessSession.DisplayColor
-        let sequenceNumber: Int
-        let colorStartTime: UInt64
+    public struct ColorEvent {
+        public let currentColor: FaceLivenessSession.DisplayColor
+        public let previousColor: FaceLivenessSession.DisplayColor
+        public let sequenceNumber: Int
+        public let colorStartTime: UInt64
     }
 
     public func showColorSequences(
