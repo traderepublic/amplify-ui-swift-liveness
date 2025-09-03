@@ -67,7 +67,7 @@ public struct DetectedFace {
         sqrt(pow(eyeCenterX - mouth.x, 2) + pow(eyeCenterY - mouth.y, 2))
     }
 
-    func normalize(width: CGFloat, height: CGFloat) -> DetectedFace {
+    public func normalize(width: CGFloat, height: CGFloat) -> DetectedFace {
         let boundingBox = CGRect(
             x: boundingBox.minX * width,
             y: boundingBox.minY * height,

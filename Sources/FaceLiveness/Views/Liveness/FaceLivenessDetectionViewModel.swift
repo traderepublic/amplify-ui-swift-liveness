@@ -21,7 +21,7 @@ public class FaceLivenessDetectionViewModel: ObservableObject {
     @Published public var isRecording = false
     @Published public var livenessState: LivenessStateMachine
 
-    weak var livenessViewControllerDelegate: FaceLivenessViewControllerPresenter?
+    public weak var livenessViewControllerDelegate: FaceLivenessViewControllerPresenter?
     var captureSession: LivenessCaptureSession?
     var closeButtonAction: () -> Void
     let videoChunker: VideoChunker
